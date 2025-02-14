@@ -341,19 +341,22 @@ src="https://www.facebook.com/tr?id=882426337145349&ev=PageView&noscript=1"
 			<div class="products_count">Залишилося <b>12</b> товарів! <br> Оплачуй відразу та отримуй безкоштовну доставку!</div>
 
 			<form id="order_form" class="order_form">
-				<input class="field" type="text" name="name" placeholder="Введіть Ваше імʼя" required pattern="[A-Za-zА-Яа-яЁёЇїІіЄєҐґ]+">
-				<input class="field" type="tel" name="phone" placeholder="Введіть Ваш телефон" required pattern="^\+?[0-9]{10,15}$" title="Номер телефону має містити тільки цифри та може починатися з +">
-				
-				<select name="weight" class="field" required>
-					<option value="5" selected>5 кг - 1249 грн</option>
-					<option value="10">10 кг - 1860 грн</option>
-					<option value="15">15 кг - 2880 грн</option>
-					<option value="20">20 кг - 3400 грн</option>
-					<option value="25">25 кг - 4200 грн</option>
-				</select>
-				
-				<button class="button order_form_button" type="submit">Оформити замовлення</button>
-			</form>
+    <input class="field" type="text" name="name" placeholder="Введіть Ваше імʼя" required pattern="[A-Za-zА-Яа-яЁёЇїІіЄєҐґ]+" />
+    <input class="field" type="tel" name="phone" placeholder="Введіть Ваш телефон" required pattern="^\+?[0-9]{10,15}$" title="Номер телефону має містити тільки цифри та може починатися з +" />
+    
+    <select name="weight" class="field" required>
+        <option value="5" selected>5 кг - 1249 грн</option>
+        <option value="10">10 кг - 1860 грн</option>
+        <option value="15">15 кг - 2880 грн</option>
+        <option value="20">20 кг - 3400 грн</option>
+        <option value="25">25 кг - 4200 грн</option>
+    </select>
+    
+    <!-- Скрите поле для захисту від ботів -->
+    <input type="text" name="honeypot" style="display:none" />
+
+    <button class="button order_form_button" type="submit">Оформити замовлення</button>
+</form>
 			
 			
 		</section>
