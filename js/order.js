@@ -49,60 +49,67 @@ function startCountdown() {
     updateTimer();
 }
 
-// ✅ Логіка обробки форми
+
 document.addEventListener("DOMContentLoaded", function () {
     startCountdown(); // Запускаємо таймер
 
-    document.getElementById("order_form").addEventListener("submit", function(event) {
-        event.preventDefault();
+    const orderForm = document.getElementById("order_form");
 
-        let formData = new FormData(this);
-        let name = formData.get("name").trim();
-        let phone = formData.get("phone").trim();
-        let honeypot = formData.get("honeypot").trim();
-        let weight = formData.get("weight");
-        let price = PRICES[weight] || "Не визначено";
+    if (orderForm) {
+        orderForm.addEventListener("submit", function(event) {
+            event.preventDefault(); // Забороняємо стандартну відправку форми
 
-       
+            // Отримуємо дані з форми
+            let formData = new FormData(this);
+            let name = formData.get("name")?.trim();
+            let phone = formData.get("phone")?.trim();
+            let honeypot = formData.get("honeypot")?.trim();
+            let weight = formData.get("weight");
+            let price = PRICES[weight] || "Не визначено";
 
-        // Перевірка імені (мінімум 3 літери, тільки букви)
-    if (!/^[A-Za-zА-Яа-яЇїІіЄєҐґ]{3,}$/.test(name)) {
-        alert("Ім'я має містити мінімум 3 літери та тільки букви!");
-        return;
-         }
-
-    // Перевірка телефону (коректний формат + заборона однакових цифр, типу 1111111111)
-    if (!/^\+?[0-9]{10,15}$/.test(phone) || /^(\d)\1+$/.test(phone)) {
-        alert("Введіть коректний номер телефону!");
-        return;
-    }
-
-        // ✅ Перевірка Honeypot (захист від ботів)
-        if (honeypot) {
-            alert("Заповнено приховане поле, ймовірно це бот!");
-            return;
-        }
-
-        let message = `📌 *Нова заявка!*\n\n👤 *Ім'я:* ${name}\n📞 *Телефон:* ${phone}\n📦 *Вага:* ${weight} кг\n💰 *Ціна:* ${price}`;
-
-        fetch(URL_API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                chat_id: CHAT_ID, 
-                text: message,
-                parse_mode: "Markdown"
-            })
-        }).then(response => response.json())
-        .then(data => {
-            if (data.ok) {
-                window.location.href = 'success.html'; // ✅ Перенаправлення після успіху
-            } else {
-                alert("❌ Помилка при відправці заявки: " + data.description);
+            // Перевірка імені (мінімум 3 літери, тільки букви)
+            if (!/^[A-Za-zА-Яа-яЇїІіЄєҐґ]{3,}$/.test(name)) {
+                alert("Ім'я має містити мінімум 3 літери та тільки букви!");
+                return;
             }
-        }).catch(error => {
-            console.error("❌ Fetch помилка:", error);
-            alert("Сталася помилка при відправці форми. Спробуйте ще раз.");
+
+            // Перевірка телефону (коректний формат + заборона однакових цифр, типу 1111111111)
+            if (!/^\+?[0-9]{10,15}$/.test(phone) || /^(\d)\1+$/.test(phone)) {
+                alert("Введіть коректний номер телефону!");
+                return;
+            }
+
+            // Перевірка Honeypot (захист від ботів)
+            if (honeypot) {
+                alert("Заповнено приховане поле, ймовірно це бот!");
+                return;
+            }
+
+            // Формування повідомлення для Telegram
+            let message = `📌 *Нова заявка!*\n\n👤 *Ім'я:* ${name}\n📞 *Телефон:* ${phone}\n📦 *Вага:* ${weight} кг\n💰 *Ціна:* ${price}`;
+
+            // Відправка запиту в Telegram API
+            fetch(URL_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: "Markdown"
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = 'success.html'; // ✅ Перенаправлення після успіху
+                } else {
+                    alert("❌ Помилка при відправці заявки: " + data.description);
+                }
+            }).catch(error => {
+                console.error("❌ Fetch помилка:", error);
+                alert("Сталася помилка при відправці форми. Спробуйте ще раз.");
+            });
         });
-    });
+    } else {
+        console.error("❌ Форма не знайдена!");
+    }
 });
